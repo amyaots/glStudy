@@ -1,6 +1,6 @@
 #include "OpenGLApp.h"
 
-
+#define  SIZE(x) sizeof(x)*std::log2(sizeof(x))
 
 OpenGLApp::OpenGLApp(uint width, uint height, std::string name):
 	OpenGLAppSample(width,height,name),
@@ -35,33 +35,33 @@ int OpenGLApp::Run()
 	return 0;
 }
 
-void OpenGLApp::SetBuffersData(glm::vec2 * vert, glm::vec3 * color, GLuint * ind)
+void OpenGLApp::SetBuffersData(glm::vec3 * vert, glm::vec3 * color, GLuint * ind, uint& num)
 {
 	m_vertexData = vert;
 	m_colorData = color;
 	m_indexData = ind;
+	m_numVertex = num;
 }
 
-void OpenGLApp::CreateData()
+void OpenGLApp::LoadAssets()
 {
 	m_program = LoadShader();
 
 	glCreateVertexArrays(1, &m_VAO);
-	glBindVertexArray(m_VAO);
-
+	
 	glCreateBuffers(1, &m_vertexBuff);
-	glNamedBufferStorage(m_vertexBuff, sizeof(m_vertexData), m_vertexData, GL_MAP_WRITE_BIT);
+	glNamedBufferStorage(m_vertexBuff, (sizeof(glm::vec3))*m_numVertex, m_vertexData, GL_MAP_WRITE_BIT);
 	if(glIsBuffer(m_vertexBuff))
 		std::cout << "Create vert buffer Successfull." << std::endl;
 
 	
 	glCreateBuffers(1, &m_colorBuff);
-	glNamedBufferStorage(m_colorBuff, sizeof(m_colorData), m_colorData, GL_MAP_WRITE_BIT);
+	glNamedBufferStorage(m_colorBuff, sizeof(glm::vec3) * m_numVertex, m_colorData, GL_MAP_WRITE_BIT);
 	if (glIsBuffer(m_vertexBuff))
 		std::cout << "Create color buffer Successfull." << std::endl;
 
 	glCreateBuffers(1, &m_indexBuff);
-	glNamedBufferStorage(m_indexBuff, sizeof(m_indexData), m_indexData, GL_MAP_WRITE_BIT);
+	glNamedBufferStorage(m_indexBuff, sizeof(uint) * m_numVertex, m_indexData, GL_MAP_WRITE_BIT);
 	if (glIsBuffer(m_indexBuff))
 		std::cout << "Create index buffer Successfull." << std::endl;
 
@@ -71,14 +71,14 @@ void OpenGLApp::CreateData()
 
 void OpenGLApp::PrepareData()
 {
-	CreateData();
+	LoadAssets();
 	
 	glBindVertexArray(m_VAO);
 	glUseProgram(m_program);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m_vertexBuff);
 	GLuint vPosition = glGetAttribLocation(m_program, "vPosition");
-	glVertexAttribPointer(vPosition, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	glVertexAttribPointer(vPosition, 3, GL_FLOAT, GL_FALSE, 0, 0);
 	glEnableVertexAttribArray(vPosition);
 	
 	glBindBuffer(GL_ARRAY_BUFFER, m_colorBuff);
@@ -118,12 +118,14 @@ void OpenGLApp::OnUpdate()
 void OpenGLApp::OnRender()
 {
 	glClear(GL_COLOR_BUFFER_BIT);
-	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, 0);
+	//glDrawArrays(GL_TRIANGLES, 0, 3)
+	glDrawElements(GL_TRIANGLES, m_numVertex, GL_UNSIGNED_INT, 0);
 }
 
 void OpenGLApp::OnDestroy()
 {
 	glUseProgram(0);
+	glDeleteProgram(m_program);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 	glDeleteBuffers(1, &m_vertexBuff);
