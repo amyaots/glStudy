@@ -15,7 +15,7 @@ int wmain(int argc, char* argv[])
 
 	const char * path[] = { "vert.glsl", "frag.glsl" };
 
-	OpenGLApp* app = new OpenGLApp(800, 600, "Test app");
+	OpenGLApp* app = new OpenGLApp(800, 600, "OpenGL 4.5 Application");
 
 	app->SetShaderFilePath(path);
 	app->SetBuffersData(vert, col, ind, num);	
