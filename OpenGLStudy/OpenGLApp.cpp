@@ -50,18 +50,18 @@ void OpenGLApp::LoadAssets()
 	glCreateVertexArrays(1, &m_VAO);
 	
 	glCreateBuffers(1, &m_vertexBuff);
-	glNamedBufferStorage(m_vertexBuff, (sizeof(glm::vec3))*m_numVertex, m_vertexData, GL_MAP_WRITE_BIT);
+	glNamedBufferStorage(m_vertexBuff, (sizeof(m_vertexData[0]))*m_numVertex, m_vertexData, GL_MAP_WRITE_BIT);
 	if(glIsBuffer(m_vertexBuff))
 		std::cout << "Create vert buffer Successfull." << std::endl;
 
 	
 	glCreateBuffers(1, &m_colorBuff);
-	glNamedBufferStorage(m_colorBuff, sizeof(glm::vec3) * m_numVertex, m_colorData, GL_MAP_WRITE_BIT);
+	glNamedBufferStorage(m_colorBuff, sizeof(m_colorData[0]) * m_numVertex, m_colorData, GL_MAP_READ_BIT);
 	if (glIsBuffer(m_vertexBuff))
 		std::cout << "Create color buffer Successfull." << std::endl;
 
 	glCreateBuffers(1, &m_indexBuff);
-	glNamedBufferStorage(m_indexBuff, sizeof(uint) * m_numVertex, m_indexData, GL_MAP_WRITE_BIT);
+	glNamedBufferStorage(m_indexBuff, sizeof(GLuint) * m_numVertex, m_indexData, GL_MAP_READ_BIT);
 	if (glIsBuffer(m_indexBuff))
 		std::cout << "Create index buffer Successfull." << std::endl;
 
@@ -89,6 +89,7 @@ void OpenGLApp::PrepareData()
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuff);
 
 	glClearColor(0.3f, 0.5f, 0.8f, 0.0f);
+	glEnable(GL_DEPTH_TEST | GL_CULL_FACE);
 	std::cout << "Prepare Data Successfull." << std::endl;
 }
 
@@ -117,8 +118,7 @@ void OpenGLApp::OnUpdate()
 
 void OpenGLApp::OnRender()
 {
-	glClear(GL_COLOR_BUFFER_BIT);
-	//glDrawArrays(GL_TRIANGLES, 0, 3)
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glDrawElements(GL_TRIANGLES, m_numVertex, GL_UNSIGNED_INT, 0);
 }
 

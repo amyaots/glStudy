@@ -21,18 +21,18 @@ protected:
 	void OnDestroy();
 
 private:
-	GLuint m_program;
-	GLuint m_VAO;
-	GLuint m_vertexBuff;
-	GLuint m_indexBuff;
-	GLuint m_colorBuff;
+	GLuint			m_program;
+	GLuint			m_VAO;
+	GLuint			m_vertexBuff;
+	GLuint			m_indexBuff;
+	GLuint			m_colorBuff;
 	glm::vec3*		m_vertexData;
 	glm::vec3*		m_colorData;
 	GLuint*			m_indexData;
 	uint			m_numVertex;
-	SDL_Window*	m_window;
-	SDL_GLContext m_context;
-	SDL_Event m_event;
-	bool m_running;
+	SDL_Window*		m_window;
+	SDL_GLContext	m_context;
+	SDL_Event		m_event;
+	bool			m_running;
 };
 
